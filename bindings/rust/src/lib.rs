@@ -806,6 +806,13 @@ macro_rules! sig_variant_impl {
             point: $pk_aff,
         }
 
+        impl Hash for PublicKey {
+            fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+                self.serialize().hash(state);
+            }
+        }
+
+
         impl PublicKey {
             // Core operations
 
