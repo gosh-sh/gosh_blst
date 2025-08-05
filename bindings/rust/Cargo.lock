@@ -35,21 +35,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
-name = "blst"
-version = "0.3.15"
-dependencies = [
- "cc",
- "criterion",
- "glob",
- "rand",
- "rand_chacha",
- "rmp-serde",
- "serde",
- "threadpool",
- "zeroize",
-]
-
-[[package]]
 name = "bumpalo"
 version = "3.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -197,6 +182,21 @@ name = "glob"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8d1add55171497b4705a648c6b583acafb01d58050a51727785f0b2c8e0a2b2"
+
+[[package]]
+name = "gosh_blst"
+version = "0.3.15"
+dependencies = [
+ "cc",
+ "criterion",
+ "glob",
+ "rand",
+ "rand_chacha",
+ "rmp-serde",
+ "serde",
+ "threadpool",
+ "zeroize",
+]
 
 [[package]]
 name = "half"

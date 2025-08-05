@@ -1,5 +1,5 @@
 [package]
-name = "blst"
+name = "gosh_blst"
 version = "0.3.15"
 authors = ["sean-sn <sean@supranational.net>"]
 edition = "2018"
