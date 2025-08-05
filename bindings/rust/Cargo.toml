@@ -5,7 +5,7 @@ authors = ["sean-sn <sean@supranational.net>"]
 edition = "2018"
 license = "Apache-2.0"
 description = "Bindings for blst BLS12-381 library"
-repository = "https://github.com/supranational/blst"
+repository = "https://github.com/gosh-sh/gosh_blst"
 readme = "README.md"
 categories = ["cryptography"]
 keywords = ["crypto", "bls", "signature", "asm", "wasm"]
@@ -14,14 +14,14 @@ include = [
     "/Cargo.toml",
     "/README.md",
     "/rustfmt.toml",
-    "/blst/src/*.c",
-    "/blst/src/*.h*",
-    "/blst/build/**",
-    "/blst/bindings/blst.h",
-    "/blst/bindings/blst_aux.h",
-    "/blst/bindings/blst.hpp",
+    "/gosh_blst/src/*.c",
+    "/gosh_blst/src/*.h*",
+    "/gosh_blst/build/**",
+    "/gosh_blst/bindings/blst.h",
+    "/gosh_blst/bindings/blst_aux.h",
+    "/gosh_blst/bindings/blst.hpp",
 ]
-links = "blst"
+links = "gosh_blst"
 
 [features]
 # By default, compile with ADX extension if the host supports it.
