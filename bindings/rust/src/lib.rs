@@ -24,7 +24,6 @@ use std::path::Path;
 #[cfg(feature = "std")]
 use std::sync::{atomic::*, mpsc::channel, Arc};
 
-//#[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 pub const BLS_SECRET_KEY_LEN: usize = 32;
@@ -814,7 +813,7 @@ macro_rules! sig_variant_impl {
             }
         }
 
-        //#[cfg(feature = "serde-secret")]
+    
         impl Serialize for SecretKey {
             fn serialize<S: Serializer>(
                 &self,
@@ -825,7 +824,7 @@ macro_rules! sig_variant_impl {
             }
         }
 
-        //#[cfg(feature = "serde-secret")]
+        
         impl<'de> Deserialize<'de> for SecretKey {
             fn deserialize<D: Deserializer<'de>>(
                 deser: D,
@@ -871,7 +870,6 @@ macro_rules! sig_variant_impl {
                 self.serialize().hash(state);
             }
         }
-
 
         impl PublicKey {
             // Core operations
@@ -970,7 +968,6 @@ macro_rules! sig_variant_impl {
             }
         }
 
-        #[cfg(feature = "serde")]
         impl Serialize for PublicKey {
             fn serialize<S: Serializer>(
                 &self,
@@ -980,7 +977,7 @@ macro_rules! sig_variant_impl {
             }
         }
 
-        #[cfg(feature = "serde")]
+        
         impl<'de> Deserialize<'de> for PublicKey {
             fn deserialize<D: Deserializer<'de>>(
                 deser: D,
@@ -1580,7 +1577,6 @@ macro_rules! sig_variant_impl {
             }
         }
 
-        #[cfg(feature = "serde")]
         impl Serialize for Signature {
             fn serialize<S: Serializer>(
                 &self,
@@ -1590,7 +1586,6 @@ macro_rules! sig_variant_impl {
             }
         }
 
-        #[cfg(feature = "serde")]
         impl<'de> Deserialize<'de> for Signature {
             fn deserialize<D: Deserializer<'de>>(
                 deser: D,
@@ -2136,7 +2131,6 @@ macro_rules! sig_variant_impl {
                 assert_ne!(pk_deser2.unwrap(), pk);
             }
 
-            #[cfg(feature = "serde")]
             #[test]
             fn test_serde() {
                 let seed = [0u8; 32];
@@ -2174,7 +2168,7 @@ macro_rules! sig_variant_impl {
                 );
                 assert_eq!(sk.sign(b"asdf", b"qwer", b"zxcv"), sig_des);
 
-                //#[cfg(feature = "serde-secret")]
+
                 if true {
                     let sk_ser =
                         rmp_serde::encode::to_vec_named(&sk).expect("ser sk");
