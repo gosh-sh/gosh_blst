@@ -18,12 +18,72 @@ use core::mem::{transmute, MaybeUninit};
 use core::ptr;
 use zeroize::Zeroize;
 use std::hash::Hash;
+use std::path::Path;
+//use serde::Serialize;
 
 #[cfg(feature = "std")]
 use std::sync::{atomic::*, mpsc::channel, Arc};
 
-#[cfg(feature = "serde")]
+//#[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+pub const BLS_SECRET_KEY_LEN: usize = 32;
+pub const BLS_PUBLIC_KEY_LEN_FOR_MIN_PK_MODE: usize = 48;
+pub const BLS_PUBLIC_KEY_LEN_FOR_MIN_SIG_MODE: usize = 96;
+pub const BLS_PUBLIC_KEY_LEN: usize = BLS_PUBLIC_KEY_LEN_FOR_MIN_PK_MODE;
+pub const BLS_KEY_MATERIAL_LEN: usize = 32;
+pub const BLS_SIG_LEN_FOR_MIN_PK_MODE: usize = 96;
+pub const BLS_SIG_LEN_FOR_MIN_SIG_MODE: usize = 48;
+pub const BLS_SIG_LEN: usize = BLS_SIG_LEN_FOR_MIN_PK_MODE;
+pub const BLS_SEED_LEN: usize = 32;
+pub const DST: [u8; 43] = *b"BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_";
+
+pub struct BLSKeyPair {
+    pub public: [u8; BLS_PUBLIC_KEY_LEN],
+    pub secret: [u8; BLS_SECRET_KEY_LEN],
+}
+
+#[derive(Serialize)]
+pub struct WrappedBLSKeyPair {
+    public: String,
+    secret: String,
+}
+
+impl WrappedBLSKeyPair {
+    pub fn new(key_pair: &BLSKeyPair) -> Self {
+        WrappedBLSKeyPair {
+            public: hex::encode(key_pair.public),
+            secret: hex::encode(key_pair.secret),
+        }
+    }
+}
+
+impl BLSKeyPair {
+    /*pub fn from(data: ([u8; BLS_PUBLIC_KEY_LEN], [u8; BLS_SECRET_KEY_LEN])) -> Self {
+        Self {
+            public: data.0,
+            secret: data.1,
+        }
+    }*/
+
+    pub fn from(data: (crate::min_pk::PublicKey, crate::min_pk::SecretKey)) -> Self {
+        Self {
+            public: data.0.to_bytes(),
+            secret: data.1.to_bytes(),
+        }
+    }
+
+    pub fn to_string(&self) -> anyhow::Result<String> {
+        let wrapped = WrappedBLSKeyPair::new(self);
+        serde_json::to_string_pretty(&wrapped)
+            .map_err(|e| anyhow::format_err!("Failed to serialize BLSKeyPair: {e}"))
+    }
+
+    pub fn save_to_file(&self, path: impl AsRef<Path>) -> anyhow::Result<()> {
+        std::fs::write(path, self.to_string()?)
+            .map_err(|e| anyhow::format_err!("Failed to save BLSKetPait: {e}"))
+    }
+}
 
 #[cfg(feature = "std")]
 trait ThreadPoolExt {
@@ -754,7 +814,7 @@ macro_rules! sig_variant_impl {
             }
         }
 
-        #[cfg(feature = "serde-secret")]
+        //#[cfg(feature = "serde-secret")]
         impl Serialize for SecretKey {
             fn serialize<S: Serializer>(
                 &self,
@@ -765,7 +825,7 @@ macro_rules! sig_variant_impl {
             }
         }
 
-        #[cfg(feature = "serde-secret")]
+        //#[cfg(feature = "serde-secret")]
         impl<'de> Deserialize<'de> for SecretKey {
             fn deserialize<D: Deserializer<'de>>(
                 deser: D,
@@ -2114,7 +2174,7 @@ macro_rules! sig_variant_impl {
                 );
                 assert_eq!(sk.sign(b"asdf", b"qwer", b"zxcv"), sig_des);
 
-                #[cfg(feature = "serde-secret")]
+                //#[cfg(feature = "serde-secret")]
                 if true {
                     let sk_ser =
                         rmp_serde::encode::to_vec_named(&sk).expect("ser sk");

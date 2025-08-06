@@ -12,6 +12,7 @@ pub enum BLST_ERROR {
     BLST_PK_IS_INFINITY = 6,
     BLST_BAD_SCALAR = 7,
 }
+
 pub type byte = u8;
 pub type limb_t = u64;
 #[repr(C)]
