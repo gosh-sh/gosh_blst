@@ -19,7 +19,7 @@ use core::ptr;
 use zeroize::Zeroize;
 use std::hash::Hash;
 use std::path::Path;
-//use serde::Serialize;
+use rand::RngCore;
 
 #[cfg(feature = "std")]
 use std::sync::{atomic::*, mpsc::channel, Arc};
@@ -89,6 +89,14 @@ trait ThreadPoolExt {
     fn joined_execute<'any, F>(&self, job: F)
     where
         F: FnOnce() + Send + 'any;
+}
+
+pub fn gen_bls_key_pair() -> (crate::min_pk::PublicKey, crate::min_pk::SecretKey) {
+    let mut ikm = [0u8; BLS_KEY_MATERIAL_LEN];
+    rand::thread_rng().fill_bytes(&mut ikm);
+    let sk = crate::min_pk::SecretKey::key_gen(&ikm, &[]).unwrap();
+    let pk = sk.sk_to_pk();
+    (pk, sk)      
 }
 
 #[cfg(all(not(feature = "no-threads"), feature = "std"))]
