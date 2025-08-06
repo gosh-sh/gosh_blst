@@ -35,7 +35,6 @@ pub const BLS_SIG_LEN_FOR_MIN_PK_MODE: usize = 96;
 pub const BLS_SIG_LEN_FOR_MIN_SIG_MODE: usize = 48;
 pub const BLS_SIG_LEN: usize = BLS_SIG_LEN_FOR_MIN_PK_MODE;
 pub const BLS_SEED_LEN: usize = 32;
-pub const DST: [u8; 43] = *b"BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_";
 
 pub struct BLSKeyPair {
     pub public: [u8; BLS_PUBLIC_KEY_LEN],
@@ -58,13 +57,7 @@ impl WrappedBLSKeyPair {
 }
 
 impl BLSKeyPair {
-    /*pub fn from(data: ([u8; BLS_PUBLIC_KEY_LEN], [u8; BLS_SECRET_KEY_LEN])) -> Self {
-        Self {
-            public: data.0,
-            secret: data.1,
-        }
-    }*/
-
+    
     pub fn from(data: (crate::min_pk::PublicKey, crate::min_pk::SecretKey)) -> Self {
         Self {
             public: data.0.to_bytes(),
@@ -80,15 +73,8 @@ impl BLSKeyPair {
 
     pub fn save_to_file(&self, path: impl AsRef<Path>) -> anyhow::Result<()> {
         std::fs::write(path, self.to_string()?)
-            .map_err(|e| anyhow::format_err!("Failed to save BLSKetPait: {e}"))
+            .map_err(|e| anyhow::format_err!("Failed to save BLSKetPair: {e}"))
     }
-}
-
-#[cfg(feature = "std")]
-trait ThreadPoolExt {
-    fn joined_execute<'any, F>(&self, job: F)
-    where
-        F: FnOnce() + Send + 'any;
 }
 
 pub fn gen_bls_key_pair() -> (crate::min_pk::PublicKey, crate::min_pk::SecretKey) {
@@ -97,6 +83,14 @@ pub fn gen_bls_key_pair() -> (crate::min_pk::PublicKey, crate::min_pk::SecretKey
     let sk = crate::min_pk::SecretKey::key_gen(&ikm, &[]).unwrap();
     let pk = sk.sk_to_pk();
     (pk, sk)      
+}
+
+
+#[cfg(feature = "std")]
+trait ThreadPoolExt {
+    fn joined_execute<'any, F>(&self, job: F)
+    where
+        F: FnOnce() + Send + 'any;
 }
 
 #[cfg(all(not(feature = "no-threads"), feature = "std"))]
@@ -985,7 +979,6 @@ macro_rules! sig_variant_impl {
             }
         }
 
-        
         impl<'de> Deserialize<'de> for PublicKey {
             fn deserialize<D: Deserializer<'de>>(
                 deser: D,
